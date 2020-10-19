@@ -16,7 +16,7 @@ include(cmake/Utils.cmake)
 dmlccore_option(USE_HDFS "Build with HDFS support" OFF)
 dmlccore_option(USE_AZURE "Build with AZURE support" OFF)
 dmlccore_option(USE_S3 "Build with S3 support" OFF)
-dmlccore_option(USE_OPENMP "Build with OpenMP" ON)
+dmlccore_option(USE_OPENMP "Build with OpenMP" OFF)
 dmlccore_option(USE_CXX14_IF_AVAILABLE "Build with C++14 if the compiler supports it" OFF)
 dmlccore_option(GOOGLE_TEST "Build google tests" OFF)
 dmlccore_option(INSTALL_DOCUMENTATION "Install documentation" OFF)
@@ -97,26 +97,26 @@ else()
 endif()
 
 # OpenMP
-if(USE_OPENMP)
-  if(APPLE AND (NOT CMAKE_COMPILER_IS_GNUCC))
+#if(USE_OPENMP)
+#  if(APPLE AND (NOT CMAKE_COMPILER_IS_GNUCC))
     # Require CMake 3.16+ for Mac to ensure that OpenMP can be located
     # (Exception: it's okay if Homebrew GCC is used)
-    cmake_minimum_required(VERSION 3.16)
-  endif()
-
-  find_package(OpenMP REQUIRED)
-
+    #    cmake_minimum_required(VERSION 3.16)
+# endif()
+#
+#  find_package(OpenMP REQUIRED)
+#
   # For CMake < 3.9, we need to make target OpenMP::OpenMP_CXX ourselves
-  if(NOT TARGET OpenMP::OpenMP_CXX)
-    find_package(Threads REQUIRED)
-    add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
-    set_property(TARGET OpenMP::OpenMP_CXX
-                 PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
-    set_property(TARGET OpenMP::OpenMP_CXX
-                 PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
-  endif()
-  target_link_libraries(dmlc PRIVATE OpenMP::OpenMP_CXX)
-endif()
+  #  if(NOT TARGET OpenMP::OpenMP_CXX)
+  #  find_package(Threads REQUIRED)
+  #    add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
+  #  set_property(TARGET OpenMP::OpenMP_CXX
+  #               PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
+  #  set_property(TARGET OpenMP::OpenMP_CXX
+  #               PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
+  #endif()
+  #target_link_libraries(dmlc PRIVATE OpenMP::OpenMP_CXX)
+  #endif()
 
 if(WIN32 AND (NOT MSVC))  # On Windows, link Shlwapi.lib for non-MSVC compilers
   target_link_libraries(dmlc PRIVATE Shlwapi)
